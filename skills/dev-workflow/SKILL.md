@@ -16,21 +16,31 @@ Run the complete development workflow for `$ARGUMENTS`.
 
 ## Execution Mode
 
-By default, run all steps automatically without pausing. Only stop on errors.
+By default, run all steps automatically without pausing. Only stop on gate failures.
 
 If the user explicitly requests confirmation at a specific step (e.g., "review the spec before implementing"), pause at that step and wait for approval before continuing.
 
 ## Workflow
 
-Execute all steps sequentially without pausing. Proceed to the next step automatically after each step completes.
+Execute all steps sequentially. Each step MUST pass its gate condition before proceeding to the next step.
 
 ```text
-Step 1: /specify    → Generate specification + task list
-Step 2: /implement  → Implement tasks from the specification
-Step 3: /refactor   → Iterative refactoring (3+ rounds)
+Step 1: /specify     → Generate specification + task list
+Step 2: /implement   → Implement tasks from the specification
+  GATE: all tests, lint, and type checks pass
+Step 3: /refactor    → Iterative refactoring (3+ rounds)
+  GATE: all tests, lint, and type checks pass
 Step 4: /code-review → Multi-perspective code review
+  GATE: no Critical or High findings remain
 Step 5: /pr-summary  → Generate PR description
 ```
+
+### Gate Failure Handling
+
+If a gate fails, STOP the workflow and fix the issues before proceeding:
+
+- **Step 2/3 gate failure**: debug and fix until all quality gates pass
+- **Step 4 gate failure**: fix all Critical and High findings, then re-run `/code-review` to verify. Do NOT proceed to Step 5 with unresolved Critical or High findings.
 
 ## Step 1: Specify
 

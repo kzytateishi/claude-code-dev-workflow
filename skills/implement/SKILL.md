@@ -38,7 +38,7 @@ Auto-detect the project's test, lint, and build commands from configuration file
 Detect the project's coverage command and minimum coverage thresholds:
 
 1. Detect the coverage command and configured thresholds from the project's configuration files
-2. If thresholds exist, coverage verification becomes mandatory in Phase 5
+2. If thresholds exist, coverage verification becomes mandatory in Phase 4
 
 ### Project Conventions
 
@@ -46,19 +46,45 @@ Detect the project's coverage command and minimum coverage thresholds:
 - Read `AGENTS.md` if present
 - Check `docs/` directory for architecture and coding guidelines
 
-## Phase 3: Implementation
+## Phase 3: Sequential Task Execution
 
-For each task:
+For each task in the task list, execute steps 1–6 **in order**. Do NOT proceed to the next task until all quality gates in step 5 pass.
 
-1. **Impact analysis**: before writing code, identify existing code that depends on or is affected by the change (callers, imports, shared types, configuration). List affected files and assess risk of breakage.
-2. Implement based on specification, following existing codebase patterns
-3. Write tests covering:
-   - **Normal cases**: expected inputs and outputs
-   - **Error cases**: invalid inputs, missing data, failure scenarios
-   - **Edge cases**: empty values, null/undefined, type boundaries
-   - **Boundary values**: min/max, off-by-one, limits
-4. Run tests and lint to verify — include tests for affected files identified in step 1
-5. If tests fail, follow the debugging procedure below
+### 1. Understand the task
+
+- Read and understand the task requirements from the specification
+- Check for similar existing implementations to follow as patterns
+
+### 2. Impact analysis
+
+Before writing code, identify existing code that depends on or is affected by the change (callers, imports, shared types, configuration). List affected files and assess risk of breakage.
+
+### 3. Implement
+
+Implement based on specification, following existing codebase patterns.
+
+### 4. Write tests
+
+Write tests covering **all** of the following categories:
+
+- **Normal cases**: expected inputs and outputs
+- **Error cases**: invalid inputs, missing data, failure scenarios
+- **Edge cases**: empty values, null/undefined, type boundaries
+- **Boundary values**: min/max, off-by-one, limits
+
+### 5. Quality gates (mandatory)
+
+Run **all** gates. Every gate MUST pass before proceeding.
+
+- [ ] **Tests pass**: run the project's test command — include tests for affected files identified in step 2
+- [ ] **Lint passes**: run the project's lint command
+- [ ] **Type check passes**: run the project's type-check command (skip if not applicable)
+
+If any gate fails, follow the debugging procedure below. Do NOT mark the task as complete or move to the next task until all gates pass.
+
+### 6. Mark complete
+
+Mark the task as `- [x]` in todo.md and proceed to the next task.
 
 ### Test Failure Debugging
 
@@ -69,25 +95,14 @@ When tests fail, follow this procedure (max 3 attempts per failure):
 3. **Fix**: apply a targeted fix based on the diagnosis
 4. **Re-run**: verify the fix resolves the failure without breaking other tests
 
-If tests still fail after 3 attempts, STOP and report the issue to the user with:
-- The failing test name and error message
+If any gate still fails after 3 attempts, STOP and report the issue to the user with:
+- The failing gate, test name, and error message
 - What was attempted
 - The suspected root cause
 
-## Phase 4: Sequential Task Execution
+Do NOT continue to the next task.
 
-For each task in the task list:
-
-1. Read and understand the task requirements
-2. Identify affected files and assess impact of the change
-3. Check for similar existing implementations to follow as patterns
-4. Implement the task
-5. Run the project's test command (including tests for affected files)
-6. If tests fail, debug and fix the implementation until tests pass
-7. Mark the task as `- [x]` in todo.md
-8. Proceed to the next task
-
-## Phase 5: Completion Verification
+## Phase 4: Completion Verification
 
 Verify the following internally before declaring implementation complete:
 

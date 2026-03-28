@@ -140,10 +140,21 @@ Generate the review report following [refs/report-template.md](refs/report-templ
 
 Print the report directly to the conversation. Do not create a file unless the user requests it.
 
+## Post-Review Action
+
+If **Critical** or **High** severity findings exist:
+
+1. Fix all Critical findings immediately
+2. Fix all High findings
+3. Re-run quality gates (tests, lint, type check) to verify fixes
+4. Re-run the review on the fixed changes to confirm resolution
+
+Do NOT consider the review complete until zero Critical and zero High findings remain.
+
 ## Notes
 
 - Always run quality gates regardless of change size
 
 ## Next Steps (optional)
 
-- `/pr-summary` to generate PR description
+- `/pr-summary` to generate PR description (only if no Critical or High findings remain)
